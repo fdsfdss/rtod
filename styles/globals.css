@@ -46,16 +46,17 @@
   --background-start-rgb: 0, 0, 0;
   --background-end-rgb: 0, 0, 0;
 
-  --primary-glow: radial-gradient(rgba(1, 65, 255, 0.4), rgba(1, 65, 255, 0));
+  --primary-glow: radial-gradient(circle, rgba(255, 0, 0, 0.2), rgba(0, 0, 255, 0));
+
   --secondary-glow: linear-gradient(
     to bottom right,
-    rgba(1, 65, 255, 0),
-    rgba(1, 65, 255, 0),
+    rgba(255, 255, 0, 0.3),
+    rgba(0, 255, 0, 0.3),
     rgba(1, 65, 255, 0.3)
   );
 
-  --tile-start-rgb: 2, 13, 46;
-  --tile-end-rgb: 2, 5, 19;
+  --tile-start-rgb: 18, 52, 86;
+  --tile-end-rgb: 34, 91, 138;
   --tile-border: conic-gradient(
     #ffffff80,
     #ffffff40,
@@ -64,7 +65,7 @@
     #ffffff10,
     #ffffff10,
     #ffffff80
-  );
+);
 
   --callout-rgb: 20, 20, 20;
   --callout-border-rgb: 108, 108, 108;
@@ -74,7 +75,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
+    --foreground-rgb: 51, 102, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
 
@@ -119,12 +120,7 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: rgb(255, 255, 255); 
 }
 
 a {

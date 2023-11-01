@@ -218,21 +218,14 @@ const WebcamComponent = (props: any) => {
         <div>Using {props.modelName}</div>
         <div className="flex gap-3 flex-row flex-wrap justify-between items-center px-5 w-full">
           <div>
-            {"Model Inference Time: " + inferenceTime.toFixed() + "ms"}
-            <br />
             {"Total Time: " + totalTime.toFixed() + "ms"}
             <br />
-            {"Overhead Time: +" + (totalTime - inferenceTime).toFixed(2) + "ms"}
           </div>
           <div>
             <div>
-              {"Model FPS: " + (1000 / inferenceTime).toFixed(2) + "fps"}
             </div>
             <div>{"Total FPS: " + (1000 / totalTime).toFixed(2) + "fps"}</div>
             <div>
-              {"Overhead FPS: " +
-                (1000 * (1 / totalTime - 1 / inferenceTime)).toFixed(2) +
-                "fps"}
             </div>
           </div>
         </div>

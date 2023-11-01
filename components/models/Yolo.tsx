@@ -135,6 +135,7 @@ const Yolo = (props: any) => {
     const g = Math.round(255 * conf);
     return `rgb(${r},${g},0)`;
   };
+  const [detectedObjectsCount, setDetectedObjectsCount] = useState<number>(0);
 
   const postprocess = async (
     tensor: Tensor,
@@ -184,19 +185,24 @@ const Yolo = (props: any) => {
       ctx.fillStyle = color.replace(")", ", 0.2)").replace("rgb", "rgba");
       ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
     }
+    setDetectedObjectsCount(tensor.dims[0]);
   };
-
   return (
-    <ObjectDetectionCamera
-      width={props.width}
-      height={props.height}
-      preprocess={preprocess}
-      postprocess={postprocess}
-      resizeCanvasCtx={resizeCanvasCtx}
-      session={session}
-      changeModelResolution={changeModelResolution}
-      modelName={modelName}
-    />
+    <div>
+      <ObjectDetectionCamera
+        width={props.width}
+        height={props.height}
+        preprocess={preprocess}
+        postprocess={postprocess}
+        resizeCanvasCtx={resizeCanvasCtx}
+        session={session}
+        changeModelResolution={changeModelResolution}
+        modelName={modelName}
+      />
+      
+      {/* Display detected objects count at the bottom */}
+      <p>&nbsp;&nbsp;Total Objects Detected: {detectedObjectsCount}</p>
+    </div>
   );
 };
 
