@@ -31,7 +31,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       return null;
     }
   
-    const webcam = webcamRef.current;
+    const webcam = webcamRef.current as Webcam | null; // Ensure webcamRef has the correct type
     if (!webcam) {
       console.error("Webcam ref not found.");
       return null;
@@ -67,6 +67,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   
     return context;
   };
+  
   
   
 
