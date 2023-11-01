@@ -26,6 +26,10 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
 
   const capture = () => {
     const canvas = videoCanvasRef.current;
+    if (!canvas) {
+      console.error("Canvas element not found.");
+      return null;
+    }
     const context = canvas.getContext("2d", {
       willReadFrequently: true,
     });
