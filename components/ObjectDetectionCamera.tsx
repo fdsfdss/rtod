@@ -111,21 +111,21 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
     reset();
     const ctx = capture();
     if (!ctx) return;
-
+  
     // create a copy of the canvas
-    const boxCtx = document.createElement("canvas").getContext("2d");
-    boxCtx.canvas.width = ctx.canvas.width;
-    boxCtx.canvas.height = ctx.canvas.height;
+    const boxCanvas = document.createElement("canvas");
+    const boxCtx = boxCanvas.getContext("2d");
+    if (!boxCtx) {
+      console.error("Canvas context not found.");
+      return;
+    }
+  
+    boxCanvas.width = ctx.canvas.width;
+    boxCanvas.height = ctx.canvas.height;
     boxCtx.drawImage(ctx.canvas, 0, 0);
-
+  
     await runModel(boxCtx);
-    ctx.drawImage(
-      boxCtx.canvas,
-      0,
-      0,
-      ctx.canvas.width,
-      ctx.canvas.height
-    );
+    ctx.drawImage(boxCanvas, 0, 0, ctx.canvas.width, ctx.canvas.height);
   };
 
   const reset = async () => {
