@@ -102,7 +102,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       await runModel(ctx);
       setTotalTime(Date.now() - startTime);
       await new Promise((resolve) =>
-        requestAnimationFrame(() => resolve())
+      requestAnimationFrame((timestamp) => resolve(timestamp))
       );
     }
   };
