@@ -70,8 +70,12 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   
   
   
-
-  const runModel = async (ctx) => {
+  const runModel = async (ctx: CanvasRenderingContext2D | null) => {
+    if (!ctx) {
+      console.error("Canvas context not found.");
+      return;
+    }
+  
     const data = props.preprocess(ctx);
     let outputTensor;
     let inferenceTime;
@@ -79,10 +83,11 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       props.session,
       data
     );
-
+  
     props.postprocess(outputTensor, props.inferenceTime, ctx);
     setInferenceTime(inferenceTime);
   };
+  
 
   const runLiveDetection = async () => {
     if (liveDetection.current) {
