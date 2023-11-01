@@ -4,9 +4,15 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
-})
+});
 
-const nextConfig = {
+const withPWA = require('next-pwa')({
+  pwa: {
+    dest: 'public',
+  },
+});
+
+module.exports = withBundleAnalyzer(withPWA({
   reactStrictMode: true,
   webpack: (config, {  }) => {
 
@@ -14,16 +20,17 @@ const nextConfig = {
     config.resolve.fallback = { fs: false };
 
     config.plugins.push(
-    new NodePolyfillPlugin(), 
-    new CopyPlugin({
-      patterns: [
-        {
-          from: './node_modules/onnxruntime-web/dist/ort-wasm.wasm',
-          to: 'static/chunks/pages',
-        },             {
-          from: './node_modules/onnxruntime-web/dist/ort-wasm-simd.wasm',
-          to: 'static/chunks/pages',
-        },          
+      new NodePolyfillPlugin(), 
+      new CopyPlugin({
+        patterns: [
+          {
+            from: './node_modules/onnxruntime-web/dist/ort-wasm.wasm',
+            to: 'static/chunks/pages',
+          },             
+          {
+            from: './node_modules/onnxruntime-web/dist/ort-wasm-simd.wasm',
+            to: 'static/chunks/pages',
+          },          
           {
             from: './models',
             to: 'static/chunks/pages',
@@ -34,14 +41,4 @@ const nextConfig = {
 
     return config;
   },
-}
-
-const withPWA = require('next-pwa')({
-  dest: 'public'
-})
-
-
-module.exports = withBundleAnalyzer(withPWA(nextConfig))
-
-
-// module.exports = nextConfig
+}));

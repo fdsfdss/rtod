@@ -8,12 +8,14 @@ import { yoloClasses } from "../../data/yolo_classes";
 import { useState } from "react";
 import { useEffect } from "react";
 import { runModelUtils } from "../../utils";
+import { useRef } from 'react';
 
+const alertSound = 'public/alert.mp3';
 
 const RES_TO_MODEL: [number[], string][] = [
-  //[[256,256], "yolov7-tiny_256x256.onnx"],
+  [[256,256], "yolov7-tiny_256x256.onnx"],
   //[[320, 320], "yolov7-tiny_320x320.onnx"],
-  [[640, 640], "yolov7-tiny_640x640.onnx"],
+  //[[640, 640], "yolov7-tiny_640x640.onnx"],
 ];
 
 const Yolo = (props: any) => {
@@ -23,6 +25,9 @@ const Yolo = (props: any) => {
   const [modelName, setModelName] = useState<string>(RES_TO_MODEL[0][1]);
   const [session, setSession] = useState<any>(null);
   const [totalObjectsColor, setTotalObjectsColor] = useState<string>("");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+
 
   useEffect(() => {
     const getSession = async () => {
@@ -183,6 +188,10 @@ const Yolo = (props: any) => {
       if (cls_id === 0) {
         personDetected = true;
         color = "rgba(255, 0, 0, 0.5)";
+        if (audioRef.current) {
+          audioRef.current.play();
+        }
+        
       }else {
         // For other classes, you can use the original color calculation
         color = conf2color(score / 100);
@@ -222,6 +231,8 @@ const Yolo = (props: any) => {
         modelName={modelName}
       />
       <p style={{ color: totalObjectsColor }}>&nbsp;&nbsp;&nbsp;&nbsp;Total Objects Detected: {detectedObjectsCount}</p>
+      <audio ref={audioRef} src="/alert.mp3" preload="auto"></audio>
+
     </div>
   );
 };
