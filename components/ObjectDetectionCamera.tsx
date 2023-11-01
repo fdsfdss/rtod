@@ -1,30 +1,33 @@
 import Webcam from "react-webcam";
-import { useRef, useState, useEffect, useLayoutEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { runModelUtils } from "../utils";
 import { Tensor } from "onnxruntime-web";
 
-const WebcamComponent = (props: any) => {
-  const [inferenceTime, setInferenceTime] = useState<number>(0);
-  const [totalTime, setTotalTime] = useState<number>(0);
-  const webcamRef = useRef<Webcam>(null);
-  const videoCanvasRef = useRef<HTMLCanvasElement>(null);
-  const liveDetection = useRef<boolean>(false);
+const WebcamComponent = (props) => {
+  const [inferenceTime, setInferenceTime] = useState(0);
+  const [totalTime, setTotalTime] = useState(0);
+  const webcamRef = useRef(null);
+  const videoCanvasRef = useRef(null);
+  const liveDetection = useRef(false);
+  const [facingMode, setFacingMode] = useState("environment");
+  const originalSize = useRef([0, 0]);
+  const [SSR, setSSR] = useState(true);
+  const [videoStream, setVideoStream] = useState(null); // Add this line
 
-  const [facingMode, setFacingMode] = useState<string>("environment");
-  const originalSize = useRef<number[]>([0, 0]);
+  const [selectedCamera, setSelectedCamera] = useState("user"); // "user" for front camera, "environment" for rear camera
 
   const capture = () => {
-    const canvas = videoCanvasRef.current!;
+    const canvas = videoCanvasRef.current;
     const context = canvas.getContext("2d", {
       willReadFrequently: true,
-    })!;
+    });
 
     if (facingMode === "user") {
       context.setTransform(-1, 0, 0, 1, canvas.width, 0);
     }
 
     context.drawImage(
-      webcamRef.current!.video!,
+      webcamRef.current.video,
       0,
       0,
       canvas.width,
@@ -37,10 +40,10 @@ const WebcamComponent = (props: any) => {
     return context;
   };
 
-  const runModel = async (ctx: CanvasRenderingContext2D) => {
+  const runModel = async (ctx) => {
     const data = props.preprocess(ctx);
-    let outputTensor: Tensor;
-    let inferenceTime: number;
+    let outputTensor;
+    let inferenceTime;
     [outputTensor, inferenceTime] = await runModelUtils.runModel(
       props.session,
       data
@@ -62,7 +65,7 @@ const WebcamComponent = (props: any) => {
       if (!ctx) return;
       await runModel(ctx);
       setTotalTime(Date.now() - startTime);
-      await new Promise<void>((resolve) =>
+      await new Promise((resolve) =>
         requestAnimationFrame(() => resolve())
       );
     }
@@ -74,31 +77,33 @@ const WebcamComponent = (props: any) => {
     if (!ctx) return;
 
     // create a copy of the canvas
-    const boxCtx = document
-      .createElement("canvas")
-      .getContext("2d") as CanvasRenderingContext2D;
+    const boxCtx = document.createElement("canvas").getContext("2d");
     boxCtx.canvas.width = ctx.canvas.width;
     boxCtx.canvas.height = ctx.canvas.height;
     boxCtx.drawImage(ctx.canvas, 0, 0);
 
     await runModel(boxCtx);
-    ctx.drawImage(boxCtx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.drawImage(
+      boxCtx.canvas,
+      0,
+      0,
+      ctx.canvas.width,
+      ctx.canvas.height
+    );
   };
 
   const reset = async () => {
-    var context = videoCanvasRef.current!.getContext("2d")!;
+    const context = videoCanvasRef.current.getContext("2d");
     context.clearRect(0, 0, originalSize.current[0], originalSize.current[1]);
     liveDetection.current = false;
   };
 
-  const [SSR, setSSR] = useState<Boolean>(true);
-
   const setWebcamCanvasOverlaySize = () => {
-    const element = webcamRef.current!.video!;
+    const element = webcamRef.current.video;
     if (!element) return;
-    var w = element.offsetWidth;
-    var h = element.offsetHeight;
-    var cv = videoCanvasRef.current;
+    const w = element.offsetWidth;
+    const h = element.offsetHeight;
+    const cv = videoCanvasRef.current;
     if (!cv) return;
     cv.width = w;
     cv.height = h;
@@ -117,12 +122,53 @@ const WebcamComponent = (props: any) => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
-  if (SSR) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    const initializeCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: selectedCamera },
+          audio: false,
+        });
+        setVideoStream(stream);
+      } catch (error) {
+        console.error("Error accessing camera:", error);
+      }
+    };
+
+    initializeCamera();
+
+    return () => {
+      if (videoStream) {
+        videoStream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+    };
+  }, [selectedCamera]);
+
+  const switchCamera = async () => {
+    if (selectedCamera === "user") {
+      setSelectedCamera("environment");
+    } else {
+      setSelectedCamera("user");
+    }
+
+    if (videoStream) {
+      videoStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: selectedCamera },
+        audio: false,
+      });
+
+      setVideoStream(newStream);
+    }
+  };
 
   return (
-    <div className="flex flex-row flex-wrap  justify-evenly align-center w-full">
+    <div className="flex flex-row flex-wrap justify-evenly align-center w-full">
       <div
         id="webcam-container"
         className="flex items-center justify-center webcam-container"
@@ -134,16 +180,14 @@ const WebcamComponent = (props: any) => {
           screenshotFormat="image/jpeg"
           imageSmoothing={true}
           videoConstraints={{
-            facingMode: facingMode,
-            // width: props.width,
-            // height: props.height,
+            facingMode: selectedCamera,
           }}
           onLoadedMetadata={() => {
             setWebcamCanvasOverlaySize();
             originalSize.current = [
-              webcamRef.current!.video!.offsetWidth,
-              webcamRef.current!.video!.offsetHeight,
-            ] as number[];
+              webcamRef.current.video.offsetWidth,
+              webcamRef.current.video.offsetHeight,
+            ];
           }}
           forceScreenshotSourceSize={true}
         />
@@ -158,58 +202,32 @@ const WebcamComponent = (props: any) => {
         ></canvas>
       </div>
       <div className="flex flex-col justify-center items-center">
-        <div className="flex gap-1 flex-row flex-wrap justify-center items-center m-5">
-          <div className="flex gap-1 justify-center items-center items-stretch">
+        <div className="flex gap-3 flex-row flex-wrap justify-center items-center m-5">
+          <div className="flex gap-3 justify-center items-center items-stretch">
             <button
-              onClick={async () => {
-                const startTime = Date.now();
-                await processImage();
-                setTotalTime(Date.now() - startTime);
-              }}
-              className="p-2 border-dashed border-2 rounded-xl hover:translate-y-1 "
+              onClick={processImage}
+              className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-300 ease-in-out"
             >
-              Capture Photo
+              Take a Photo
             </button>
             <button
-              onClick={async () => {
-                if (liveDetection.current) {
-                  liveDetection.current = false;
-                } else {
-                  runLiveDetection();
-                }
-              }}
-              //on hover, shift the button up
+              onClick={runLiveDetection}
               className={`
-              p-2  border-dashed border-2 rounded-xl hover:translate-y-1 
+              p-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition duration-300 ease-in-out 
               ${liveDetection.current ? "bg-white text-black" : ""}
-              
               `}
             >
-              Live Detection
+              {liveDetection.current ? "Stop" : "Start"} Live Detection
             </button>
-          </div>
-          <div className="flex gap-1 justify-center items-center items-stretch">
             <button
-              onClick={() => {
-                reset();
-                setFacingMode(facingMode === "user" ? "environment" : "user");
-              }}
-              className="p-2  border-dashed border-2 rounded-xl hover:translate-y-1 "
+              onClick={switchCamera}
+              className="p-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition duration-300 ease-in-out"
             >
               Switch Camera
             </button>
             <button
-              onClick={() => {
-                reset();
-                props.changeModelResolution();
-              }}
-              className="p-2  border-dashed border-2 rounded-xl hover:translate-y-1 "
-            >
-              Change Model
-            </button>
-            <button
               onClick={reset}
-              className="p-2  border-dashed border-2 rounded-xl hover:translate-y-1 "
+              className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition duration-300 ease-in-out"
             >
               Reset
             </button>
@@ -222,11 +240,7 @@ const WebcamComponent = (props: any) => {
             <br />
           </div>
           <div>
-            <div>
-            </div>
             <div>{"Total FPS: " + (1000 / totalTime).toFixed(2) + "fps"}</div>
-            <div>
-            </div>
           </div>
         </div>
       </div>
