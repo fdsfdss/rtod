@@ -33,22 +33,27 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
     const context = canvas.getContext("2d", {
       willReadFrequently: true,
     });
-
-    if (facingMode === "user") {
-      context.setTransform(-1, 0, 0, 1, canvas.width, 0);
+  
+    if (context) {
+      if (facingMode === "user") {
+        context.setTransform(-1, 0, 0, 1, canvas.width, 0);
+      }
+  
+      context.drawImage(
+        webcamRef.current.video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+  
+      if (facingMode === "user") {
+        context.setTransform(1, 0, 0, 1, 0, 0);
+      }
+    } else {
+      console.error("Canvas context not found.");
     }
-
-    context.drawImage(
-      webcamRef.current.video,
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-    if (facingMode === "user") {
-      context.setTransform(1, 0, 0, 1, 0, 0);
-    }
+  
     return context;
   };
 
