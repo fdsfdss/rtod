@@ -25,11 +25,18 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   const [selectedCamera, setSelectedCamera] = useState("user"); // "user" for front camera, "environment" for rear camera
 
   const capture = () => {
-    const canvas = videoCanvasRef.current as HTMLCanvasElement | null; // Use type assertion
+    const canvas = videoCanvasRef.current as HTMLCanvasElement | null;
     if (!canvas) {
       console.error("Canvas element not found.");
       return null;
     }
+  
+    const videoElement = webcamRef.current?.video;
+    if (!videoElement) {
+      console.error("Video element not found.");
+      return null;
+    }
+  
     const context = canvas.getContext("2d", {
       willReadFrequently: true,
     });
@@ -40,7 +47,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       }
   
       context.drawImage(
-        webcamRef.current.video,
+        videoElement,
         0,
         0,
         canvas.width,
@@ -56,6 +63,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   
     return context;
   };
+  
 
   const runModel = async (ctx) => {
     const data = props.preprocess(ctx);
