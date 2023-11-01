@@ -25,7 +25,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   const [selectedCamera, setSelectedCamera] = useState("user"); // "user" for front camera, "environment" for rear camera
 
   const capture = () => {
-    const canvas = videoCanvasRef.current;
+    const canvas = videoCanvasRef.current as HTMLCanvasElement | null; // Use type assertion
     if (!canvas) {
       console.error("Canvas element not found.");
       return null;
