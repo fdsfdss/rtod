@@ -144,7 +144,7 @@ const WebcamComponent = (props) => {
         });
       }
     };
-  }, [selectedCamera]);
+  }, [selectedCamera,videoStream]);
 
   const switchCamera = async () => {
     if (selectedCamera === "user") {
