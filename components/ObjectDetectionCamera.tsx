@@ -31,9 +31,15 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       return null;
     }
   
-    const videoElement = webcamRef.current?.video;
-    if (!videoElement) {
-      console.error("Video element not found.");
+    const webcam = webcamRef.current;
+    if (!webcam) {
+      console.error("Webcam ref not found.");
+      return null;
+    }
+  
+    const screenshot = webcam.getScreenshot();
+    if (!screenshot) {
+      console.error("Failed to capture screenshot.");
       return null;
     }
   
@@ -46,23 +52,22 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
         context.setTransform(-1, 0, 0, 1, canvas.width, 0);
       }
   
-      context.drawImage(
-        videoElement,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+      const image = new Image();
+      image.src = screenshot;
+      image.onload = () => {
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
   
-      if (facingMode === "user") {
-        context.setTransform(1, 0, 0, 1, 0, 0);
-      }
+        if (facingMode === "user") {
+          context.setTransform(1, 0, 0, 1, 0, 0);
+        }
+      };
     } else {
       console.error("Canvas context not found.");
     }
   
     return context;
   };
+  
   
 
   const runModel = async (ctx) => {
