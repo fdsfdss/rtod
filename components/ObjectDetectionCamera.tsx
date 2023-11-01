@@ -3,7 +3,15 @@ import { useRef, useState, useEffect } from "react";
 import { runModelUtils } from "../utils";
 import { Tensor } from "onnxruntime-web";
 
-const WebcamComponent = (props) => {
+interface WebcamComponentProps {
+  modelName: string; // Define the expected properties and their types here
+  preprocess: (ctx: CanvasRenderingContext2D) => any; // Adjust the types as needed
+  session: any; // Adjust the type for 'session' as needed
+  inferenceTime: number; // Adjust the type for 'inferenceTime' as needed
+  postprocess: (outputTensor: Tensor, inferenceTime: number, ctx: CanvasRenderingContext2D) => void; // Adjust the types as needed
+}
+
+const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   const [inferenceTime, setInferenceTime] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
   const webcamRef = useRef(null);
