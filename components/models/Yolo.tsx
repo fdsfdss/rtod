@@ -14,8 +14,8 @@ const alertSound = 'public/alert.mp3';
 
 const RES_TO_MODEL: [number[], string][] = [
   [[256,256], "yolov7-tiny_256x256.onnx"],
-  //[[320, 320], "yolov7-tiny_320x320.onnx"],
-  //[[640, 640], "yolov7-tiny_640x640.onnx"],
+  [[320, 320], "yolov7-tiny_320x320.onnx"],
+  [[640, 640], "yolov7-tiny_640x640.onnx"],
 ];
 
 const Yolo = (props: any) => {
@@ -24,7 +24,7 @@ const Yolo = (props: any) => {
   );
   const [modelName, setModelName] = useState<string>(RES_TO_MODEL[0][1]);
   const [session, setSession] = useState<any>(null);
-  const [totalObjectsColor, setTotalObjectsColor] = useState<string>("");
+  //const [totalObjectsColor, setTotalObjectsColor] = useState<string>("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [inferenceTime] = useState<number>(0); // assuming inferenceTime is a number
 
@@ -209,14 +209,14 @@ const Yolo = (props: any) => {
       ctx.fillStyle = color.replace(")", ", 0.2)").replace("rgb", "rgba");
       ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
     }
-    setDetectedObjectsCount(tensor.dims[0]);
+    //setDetectedObjectsCount(tensor.dims[0]);
       // Change the color of "Total Objects Detected" to red if a person is detected
-    if (personDetected) {
-      setTotalObjectsColor("red");
+    //if (personDetected) {
+      //setTotalObjectsColor("red");
 
-    } else {
-      setTotalObjectsColor(""); // Reset to default color
-    }
+   // } else {
+      //setTotalObjectsColor(""); // Reset to default color
+    //}
   };
 
   return (
@@ -233,7 +233,7 @@ const Yolo = (props: any) => {
         inferenceTime={inferenceTime} // Added prop
 
       />
-      <p style={{ color: totalObjectsColor }}>&nbsp;&nbsp;&nbsp;&nbsp;Total Objects Detected: {detectedObjectsCount}</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;Total Objects Detected: {detectedObjectsCount}</p>
       <audio ref={audioRef} src="/alert.mp3" preload="auto"></audio>
 
     </div>

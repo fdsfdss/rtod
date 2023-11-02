@@ -13,6 +13,8 @@ interface WebcamComponentProps {
   height: number; // Add height prop with the appropriate type // Adjust the types as needed
   resizeCanvasCtx?: (ctx: CanvasRenderingContext2D, targetWidth: number, targetHeight: number, inPlace?: boolean) => CanvasRenderingContext2D; // Adjust the return type as needed
   changeModelResolution: (width: number, height: number) => void;
+  session: InferenceSession | null; // Use the InferenceSession type here
+
 }
 
 const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
@@ -80,17 +82,24 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       console.error("Canvas context not found.");
       return;
     }
-
+  
     const data = props.preprocess(ctx);
     let outputTensor;
     let inferenceTime;
-    [outputTensor, inferenceTime] = await runModelUtils.runModel(
-      props.session,
-      data
-    );
   
-    props.postprocess(outputTensor, props.inferenceTime, ctx);
-    setInferenceTime(inferenceTime);
+    try {
+      // This will now correctly handle a null session and throw an error if it is null
+      [outputTensor, inferenceTime] = await runModelUtils.runModel(
+        props.session,
+        data
+      );
+    
+      props.postprocess(outputTensor, inferenceTime, ctx);
+      setInferenceTime(inferenceTime);
+    } catch (e) {
+      console.error(e.message);
+      // You can handle the error as needed here, e.g., show an alert or set an error state
+    }
   };
   
 
@@ -112,26 +121,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
     }
   };
 
-  const processImage = async () => {
-    reset();
-    const ctx = capture();
-    if (!ctx) return;
-  
-    // create a copy of the canvas
-    const boxCanvas = document.createElement("canvas");
-    const boxCtx = boxCanvas.getContext("2d");
-    if (!boxCtx) {
-      console.error("Canvas context not found.");
-      return;
-    }
-  
-    boxCanvas.width = ctx.canvas.width;
-    boxCanvas.height = ctx.canvas.height;
-    boxCtx.drawImage(ctx.canvas, 0, 0);
-  
-    await runModel(boxCtx);
-    ctx.drawImage(boxCanvas, 0, 0, ctx.canvas.width, ctx.canvas.height);
-  };
+
 
   const reset = async () => {
     if (videoCanvasRef.current) {
@@ -188,12 +178,12 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
 
     return () => {
       if (videoStream) {
-        videoStream.getTracks().forEach((track) => {
-          track.stop();
-        });
+        videoStream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [selectedCamera,videoStream]);
+  
+    // Effect dependencies: whenever `selectedCamera` changes, this effect will run
+  }, [selectedCamera]);
 
   const switchCamera = async () => {
     if (selectedCamera === "user") {
@@ -253,12 +243,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       <div className="flex flex-col justify-center items-center">
         <div className="flex gap-3 flex-row flex-wrap justify-center items-center m-5">
           <div className="flex gap-3 justify-center items-center items-stretch">
-            <button
-              onClick={processImage}
-              className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-300 ease-in-out"
-            >
-              Take a Photo
-            </button>
+
             <button
               onClick={runLiveDetection}
               className={`
