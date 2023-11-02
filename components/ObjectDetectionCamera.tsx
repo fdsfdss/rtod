@@ -129,18 +129,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   };
 
   const reset = async () => {
-    const canvas = videoCanvasRef.current;
-    if (!canvas) {
-      console.error("Video canvas element not found.");
-      return;
-    }
-  
-    const context = canvas.getContext("2d");
-    if (!context) {
-      console.error("Canvas context not found.");
-      return;
-    }
-  
+    const context = videoCanvasRef.current.getContext("2d");
     context.clearRect(0, 0, originalSize.current[0], originalSize.current[1]);
     liveDetection.current = false;
   };
