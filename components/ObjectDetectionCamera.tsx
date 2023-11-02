@@ -143,7 +143,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   
 
   const setWebcamCanvasOverlaySize = () => {
-    const element = webcamRef.current.video;
+    const element = webcamRef.current?.video;
     if (!element) return;
     const w = element.offsetWidth;
     const h = element.offsetHeight;
