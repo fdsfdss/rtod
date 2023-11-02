@@ -20,7 +20,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   const [facingMode, setFacingMode] = useState("environment");
   const originalSize = useRef([0, 0]);
   const [SSR, setSSR] = useState(true);
-  const [videoStream, setVideoStream] = useState(null); // Add this line
+  const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
 
   const [selectedCamera, setSelectedCamera] = useState("user"); // "user" for front camera, "environment" for rear camera
 
@@ -173,7 +173,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
           video: { facingMode: selectedCamera },
           audio: false,
         });
-        setVideoStream(stream);
+        setVideoStream(stream as MediaStream);
       } catch (error) {
         console.error("Error accessing camera:", error);
       }
