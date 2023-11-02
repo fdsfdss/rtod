@@ -26,6 +26,7 @@ const Yolo = (props: any) => {
   const [session, setSession] = useState<any>(null);
   const [totalObjectsColor, setTotalObjectsColor] = useState<string>("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [inferenceTime] = useState<number>(0); // assuming inferenceTime is a number
 
 
 
@@ -229,6 +230,8 @@ const Yolo = (props: any) => {
         session={session}
         changeModelResolution={changeModelResolution}
         modelName={modelName}
+        inferenceTime={inferenceTime} // Added prop
+
       />
       <p style={{ color: totalObjectsColor }}>&nbsp;&nbsp;&nbsp;&nbsp;Total Objects Detected: {detectedObjectsCount}</p>
       <audio ref={audioRef} src="/alert.mp3" preload="auto"></audio>
