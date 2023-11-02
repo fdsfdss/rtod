@@ -229,8 +229,8 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
           onLoadedMetadata={() => {
             setWebcamCanvasOverlaySize();
             originalSize.current = [
-              webcamRef.current.video.offsetWidth,
-              webcamRef.current.video.offsetHeight,
+              webcamRef.current?.video?.offsetWidth || 0,
+              webcamRef.current?.video?.offsetHeight || 0,
             ];
           }}
           forceScreenshotSourceSize={true}
