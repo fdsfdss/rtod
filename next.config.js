@@ -8,33 +8,3 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 
 
-module.exports = withBundleAnalyzer(withPWA({
-  reactStrictMode: true,
-  webpack: (config, {  }) => {
-
-    config.resolve.extensions.push(".ts", ".tsx");
-    config.resolve.fallback = { fs: false };
-
-    config.plugins.push(
-      new NodePolyfillPlugin(), 
-      new CopyPlugin({
-        patterns: [
-          {
-            from: './node_modules/onnxruntime-web/dist/ort-wasm.wasm',
-            to: 'static/chunks/pages',
-          },             
-          {
-            from: './node_modules/onnxruntime-web/dist/ort-wasm-simd.wasm',
-            to: 'static/chunks/pages',
-          },          
-          {
-            from: './models',
-            to: 'static/chunks/pages',
-          },
-        ],
-      }),
-    );
-
-    return config;
-  },
-}));
