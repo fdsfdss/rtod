@@ -14,7 +14,7 @@ interface WebcamComponentProps {
 const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   const [inferenceTime, setInferenceTime] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
-  const webcamRef = useRef(null);
+  const webcamRef = useRef<Webcam | null>(null);
   const videoCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const liveDetection = useRef(false);
   const [facingMode, setFacingMode] = useState("environment");
