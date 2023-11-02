@@ -11,6 +11,8 @@ interface WebcamComponentProps {
   postprocess: (outputTensor: Tensor, inferenceTime: number, ctx: CanvasRenderingContext2D) => void;
   width: number; // Add width prop with the appropriate type
   height: number; // Add height prop with the appropriate type // Adjust the types as needed
+  resizeCanvasCtx?: (ctx: CanvasRenderingContext2D, targetWidth: number, targetHeight: number, inPlace?: boolean) => CanvasRenderingContext2D; // Adjust the return type as needed
+
 }
 
 const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
