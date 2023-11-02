@@ -25,6 +25,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   const originalSize = useRef([0, 0]);
   const [SSR, setSSR] = useState(true);
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  const [modelLoaded, setModelLoaded] = useState(false);
 
   const [selectedCamera, setSelectedCamera] = useState("user"); // "user" for front camera, "environment" for rear camera
 
@@ -79,7 +80,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       console.error("Canvas context not found.");
       return;
     }
-  
+
     const data = props.preprocess(ctx);
     let outputTensor;
     let inferenceTime;

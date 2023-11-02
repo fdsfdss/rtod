@@ -10,9 +10,12 @@ export async function createModelCpu(
 }
 
 export async function runModel(
-  model: InferenceSession,
+  model: InferenceSession | null,  // Update this to reflect that model might be null
   preprocessedData: Tensor
 ): Promise<[Tensor, number]> {
+  if (!model) {
+    throw new Error('Model is not loaded'); // Add this check for better error messaging
+  }
   
   try {
     const feeds: Record<string, Tensor> = {};
@@ -25,6 +28,6 @@ export async function runModel(
     return [output, inferenceTime];
   } catch (e) {
     console.error(e);
-    throw new Error();
+    throw new Error(`Error during model inference: ${e.message}`);
   }
 }
