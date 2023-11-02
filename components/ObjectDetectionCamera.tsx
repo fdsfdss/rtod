@@ -129,10 +129,18 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
   };
 
   const reset = async () => {
-    const context = videoCanvasRef.current.getContext("2d");
-    context.clearRect(0, 0, originalSize.current[0], originalSize.current[1]);
-    liveDetection.current = false;
+    if (videoCanvasRef.current) {
+      const context = videoCanvasRef.current.getContext('2d');
+      if (context) {
+        context.clearRect(0, 0, originalSize.current[0], originalSize.current[1]);
+      }
+      liveDetection.current = false;
+    } else {
+      // Handle the case where the ref is null
+      console.error('Canvas ref is null');
+    }
   };
+  
 
   const setWebcamCanvasOverlaySize = () => {
     const element = webcamRef.current.video;
