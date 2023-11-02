@@ -13,8 +13,6 @@ interface WebcamComponentProps {
   height: number; // Add height prop with the appropriate type // Adjust the types as needed
   resizeCanvasCtx?: (ctx: CanvasRenderingContext2D, targetWidth: number, targetHeight: number, inPlace?: boolean) => CanvasRenderingContext2D; // Adjust the return type as needed
   changeModelResolution: (width: number, height: number) => void;
-  inferenceTime: number;
-
 }
 
 const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
