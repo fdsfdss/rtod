@@ -84,7 +84,10 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       console.error("Canvas context not found.");
       return;
     }
-  
+    if (!props.session) {
+      console.error("Inference session is null, cannot run the model.");
+      return;
+    }
     const data = props.preprocess(ctx);
     let outputTensor;
     let inferenceTime;
