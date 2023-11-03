@@ -102,7 +102,13 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
       props.postprocess(outputTensor, inferenceTime, ctx);
       setInferenceTime(inferenceTime);
     } catch (e) {
-      console.error(e.message);
+      // Narrow down the type of 'e' to 'Error' if it is an instance of Error
+      if (e instanceof Error) {
+        console.error(e.message);
+      } else {
+        // If it's not an Error, we might still want to log it or show a generic message
+        console.error('An error occurred, but it could not be determined:', e);
+      }
       // You can handle the error as needed here, e.g., show an alert or set an error state
     }
   };
