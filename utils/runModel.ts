@@ -1,10 +1,17 @@
 import { InferenceSession, Tensor } from "onnxruntime-web";
 
 export async function createModelCpu(url: string): Promise<InferenceSession> {
-  return InferenceSession.create(url, {
-    executionProviders: ["wasm"],
-    graphOptimizationLevel: "all",
-  });
+  try {
+    const session = await InferenceSession.create(url, {
+      executionProviders: ["wasm"],
+      graphOptimizationLevel: "all",
+    });
+    return session;
+  } catch (error) {
+    console.error('Error during ONNX Runtime session creation:', error);
+    // Rethrow or handle the error as needed
+    throw error;
+  }
 }
 
 export async function runModel(

@@ -32,10 +32,15 @@ const Yolo = (props: any) => {
 
   useEffect(() => {
     const getSession = async () => {
-      const session = await runModelUtils.createModelCpu(
-        `./_next/static/chunks/pages/${modelName}`
-      );
-      setSession(session);
+      try {
+        const session = await runModelUtils.createModelCpu(
+          `./_next/static/chunks/pages/${modelName}`
+        );
+        setSession(session);
+      } catch (error) {
+        console.error("Failed to load the model:", error);
+        // Add any UI notification or state updates to reflect the failed loading state
+      }
     };
     getSession();
   }, [modelName]);
