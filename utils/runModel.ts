@@ -33,7 +33,13 @@ export async function loadAndRunModel(
     // Then, run the model with the preprocessed data
     return runModel(model, preprocessedData);
   } catch (error) {
-    console.error(error);
-    throw new Error(`Failed to load or run model: ${error.message}`);
+    // Log the error regardless of its type
+    console.error('An error occurred in loadAndRunModel:', error);
+
+    // Check if the error is an instance of Error and has a message property
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    
+    // Throw a new error with the original error message or a generic one if unknown
+    throw new Error(`Failed to load or run model: ${errorMessage}`);
   }
 }
