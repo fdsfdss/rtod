@@ -6,7 +6,7 @@ import { Tensor } from "onnxruntime-web";
 interface WebcamComponentProps {
   modelName: string; // Define the expected properties and their types here
   preprocess: (ctx: CanvasRenderingContext2D) => any; // Adjust the types as needed
-  session: any; // Adjust the type for 'session' as needed
+//  session: any; // Adjust the type for 'session' as needed
   inferenceTime: number; // Adjust the type for 'inferenceTime' as needed
   postprocess: (outputTensor: Tensor, inferenceTime: number, ctx: CanvasRenderingContext2D) => void;
   width: number; // Add width prop with the appropriate type
@@ -183,7 +183,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
     };
   
     // Effect dependencies: whenever `selectedCamera` changes, this effect will run
-  }, [selectedCamera]);
+  }, [selectedCamera, videoStream]);
 
   const switchCamera = async () => {
     if (selectedCamera === "user") {
