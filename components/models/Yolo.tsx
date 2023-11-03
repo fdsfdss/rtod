@@ -14,8 +14,8 @@ const alertSound = 'public/alert.mp3';
 
 const RES_TO_MODEL: [number[], string][] = [
   [[256,256], "yolov7-tiny_256x256.onnx"],
-  [[320, 320], "yolov7-tiny_320x320.onnx"],
-  [[640, 640], "yolov7-tiny_640x640.onnx"],
+  //[[320, 320], "yolov7-tiny_320x320.onnx"],
+  //[[640, 640], "yolov7-tiny_640x640.onnx"],
 ];
 
 const Yolo = (props: any) => {
