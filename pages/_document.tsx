@@ -20,10 +20,10 @@ export default function Document() {
         <meta name="msapplication-tap-highlight" content="no" />
         <meta name="theme-color" content="#000000" />
 
-        <link rel="apple-touch-icon" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/icon-512x512.png" />
 
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/icon.png" />
+        <link rel="icon" href="/icon-512x512.png" />
         
         <meta name="google-site-verification" content="kPFEI7Zrf_ZNTei2hRsBk-luHRtoO6a9AvndfpekAc8" />
       </Head>
