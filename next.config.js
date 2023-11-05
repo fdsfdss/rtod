@@ -36,12 +36,4 @@ const nextConfig = {
   },
 }
 
-const withPWA = require('next-pwa')({
-  dest: 'public'
-})
-
-
-module.exports = withBundleAnalyzer(withPWA(nextConfig))
-
-
 // module.exports = nextConfig
